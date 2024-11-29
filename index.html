@@ -3,107 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Get Overall Analysis</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             margin: 0;
             background-color: #f4f4f9;
         }
-        .login-container {
+        .container {
             background: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            width: 300px;
-        }
-        .login-container h2 {
+            width: 400px;
             text-align: center;
-            margin-bottom: 20px;
         }
-        .login-container label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        .login-container input, .login-container textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .login-container button {
-            width: 100%;
-            padding: 10px;
+        button {
+            padding: 10px 20px;
             background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
-        .login-container button:hover {
+        button:hover {
             background-color: #0056b3;
         }
-        .error {
-            color: red;
-            font-size: 0.9em;
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            font-family: Arial, sans-serif;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form id="loginForm">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            
-            <button type="submit">Login</button>
-            <p id="error" class="error"></p>
-        </form>
-        <label for="response">API Response:</label>
-        <textarea id="response" rows="5" readonly></textarea>
+    <div class="container">
+        <h2>Get Overall Analysis</h2>
+        <button id="fetchData">Fetch Data</button>
+        <textarea id="response" readonly></textarea>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorElement = document.getElementById('error');
+        document.getElementById('fetchData').addEventListener('click', async function() {
             const responseElement = document.getElementById('response');
-            
-            errorElement.textContent = ''; // Clear previous errors
-            responseElement.value = ''; // Clear previous responses
+            responseElement.value = "Loading..."; // Indicate loading state
 
-            const apiUrl = 'http://137.184.248.206/api/authentication/login';
+            const apiUrl = 'http://137.184.248.206/api/programms/getOverallAnalysis';
 
             try {
                 const response = await fetch(apiUrl, {
-                    method: 'POST',
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
+                    }
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    responseElement.value = JSON.stringify(data, null, 2); // Display response
+                    responseElement.value = JSON.stringify(data, null, 2); // Format response as pretty JSON
                 } else {
-                    const errorData = await response.json();
-                    errorElement.textContent = errorData.message || 'Login failed. Please try again.';
+                    responseElement.value = `Error: ${response.status} ${response.statusText}`;
                 }
             } catch (error) {
                 console.error('Error:', error);
-                errorElement.textContent = 'An error occurred while logging in.';
+                responseElement.value = 'An error occurred while fetching data.';
             }
         });
     </script>
