@@ -29,7 +29,7 @@
             display: block;
             margin: 10px 0 5px;
         }
-        .login-container input {
+        .login-container input, .login-container textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -67,6 +67,8 @@
             <button type="submit">Login</button>
             <p id="error" class="error"></p>
         </form>
+        <label for="response">API Response:</label>
+        <textarea id="response" rows="5" readonly></textarea>
     </div>
 
     <script>
@@ -76,7 +78,10 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const errorElement = document.getElementById('error');
+            const responseElement = document.getElementById('response');
+            
             errorElement.textContent = ''; // Clear previous errors
+            responseElement.value = ''; // Clear previous responses
 
             const apiUrl = 'http://137.184.248.206/api/authentication/login';
 
@@ -91,8 +96,7 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    alert('Login successful!');
-                    console.log('Response:', data);
+                    responseElement.value = JSON.stringify(data, null, 2); // Display response
                 } else {
                     const errorData = await response.json();
                     errorElement.textContent = errorData.message || 'Login failed. Please try again.';
